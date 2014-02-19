@@ -1,12 +1,16 @@
 mixpanel-python
 ===============
-This is the official Mixpanel Python library. This library allows for server-side integration of Mixpanel.
+This is an inofficial Mixpanel Python3.3 library. This library allows for server-side integration of Mixpanel.
+
+Features
+--------
+* Support for Python3.3
+* Async support using tornados AsyncHTTPClient
 
 Installation
 ------------
-The library can be installed using pip:
+This Python3.3 library can not be installed via PyPi jet. Please clone the repo.
 
-    pip install mixpanel-py
 
 Getting Started
 ---------------

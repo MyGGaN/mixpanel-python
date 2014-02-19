@@ -207,7 +207,7 @@ class ConsumerTestCase(unittest.TestCase):
     def _assertSends(self, expect_url, expect_data):
         mock_response = MagicMock()
         mock_response.read.return_value = '{"status":1, "error": null}'.encode('utf-8')
-        with patch('urllib.request.urlopen', return_value = mock_response) as urlopen:
+        with patch('urllib.request.urlopen', return_value=mock_response) as urlopen:
             yield
 
             self.assertEqual(urlopen.call_count, 1)
@@ -230,7 +230,7 @@ class BufferedConsumerTestCase(unittest.TestCase):
         self.MAX_LENGTH = 10
         self.consumer = mixpanel.BufferedConsumer(self.MAX_LENGTH)
         self.mock = MagicMock()
-        self.mock.read.return_value = '{"status":1, "error": null}'.encode('utf-8')
+        self.mock.read.return_value = '{"status": 1, "error": null}'.encode('utf-8')
 
     def test_buffer_hold_and_flush(self):
         with patch('urllib.request.urlopen', return_value = self.mock) as urlopen:
@@ -267,8 +267,8 @@ class FunctionalTestCase(unittest.TestCase):
     @contextlib.contextmanager
     def _assertRequested(self, expect_url, expect_data):
         mock_response = MagicMock()
-        mock_response.read.return_value = '{"status":1, "error": null}'.encode('utf-8')
-        with patch('urllib.request.urlopen', return_value = mock_response) as urlopen:
+        mock_response.read.return_value = '{"status": 1, "error": null}'.encode('utf-8')
+        with patch('urllib.request.urlopen', return_value=mock_response) as urlopen:
             yield
 
             self.assertEqual(urlopen.call_count, 1)
@@ -285,12 +285,12 @@ class FunctionalTestCase(unittest.TestCase):
     def test_track_functional(self):
         # XXX this includes $lib_version, which means the test breaks
         # every time we release.
-        expect_data = {'event': {'color': 'blue', 'size': 'big'}, 'properties': {'mp_lib': 'python', 'token': '12345', 'distinct_id': 'button press', '$lib_version': mixpanel.VERSION, 'time': 1000}}
+        expect_data = {'event': {'color': 'blue', 'size': 'big'}, 'properties': {'mp_lib': 'python', 'token': self.TOKEN, 'distinct_id': 'button press', '$lib_version': mixpanel.VERSION, 'time': 1000}}
         with self._assertRequested('https://api.mixpanel.com/track', expect_data):
             self.mp.track('button press', {'size': 'big', 'color': 'blue'})
 
     def test_people_set_functional(self):
-        expect_data = {'$distinct_id': 'amq', '$set': {'birth month': 'october', 'favorite color': 'purple'}, '$time': 1000000, '$token': '12345'}
+        expect_data = {'$distinct_id': 'amq', '$set': {'birth month': 'october', 'favorite color': 'purple'}, '$time': 1000000, '$token': self.TOKEN}
         with self._assertRequested('https://api.mixpanel.com/engage', expect_data):
              self.mp.people_set('amq', {'birth month': 'october', 'favorite color': 'purple'})
 

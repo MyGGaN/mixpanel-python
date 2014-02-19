@@ -1,7 +1,6 @@
 import base64
 import json
 import time
-import sys
 import urllib.request
 
 # The mixpanel package allows you to easily track events and
@@ -141,7 +140,7 @@ class Mixpanel(object):
         property that doesn't exist will result in assigning a list with one
         element to that property.
         Example:
-            mp.people_append('12345', { "Power Ups": "Bubble Lead" })
+            mp.people_append('12345', {"Power Ups": "Bubble Lead"})
         """
         return self.people_update({
             '$distinct_id': distinct_id,
@@ -156,7 +155,7 @@ class Mixpanel(object):
         the request are merged with the existing list on the user profile,
         ignoring duplicate list values.
         Example:
-            mp.people_union('12345', { "Items purchased": ["socks", "shirts"] } )
+            mp.people_union('12345', {"Items purchased": ["socks", "shirts"]})
         """
         return self.people_update({
             '$distinct_id': distinct_id,
@@ -206,7 +205,8 @@ class Mixpanel(object):
             mp.people_track_charge('1234', 50, {'$time': "2013-04-01T09:02:00"})
         """
         properties.update({'$amount': amount})
-        return self.people_append(distinct_id, {'$transactions': properties}, meta=meta)
+        return self.people_append(distinct_id, {'$transactions': properties},
+                                  meta=meta)
 
     def people_clear_charges(self, distinct_id, meta={}):
         """
@@ -330,10 +330,12 @@ class BufferedConsumer(object):
         may trigger a request to Mixpanel's servers.
 
         Calls to send() may throw an exception, but the exception may be
-        associated with the message given in an earlier call. If this is the case,
-        the resulting MixpanelException e will have members e.message and e.endpoint
+        associated with the message given in an earlier call. If this is the
+        case, the resulting MixpanelException e will have members e.message
+        and e.endpoint
 
-        :param endpoint: One of 'events' or 'people', the Mixpanel endpoint for sending the data
+        :param endpoint: One of 'events' or 'people', the Mixpanel endpoint
+            for sending the data
         :type endpoint: str (one of 'events' or 'people')
         :param json_message: A json message formatted for the endpoint.
         :type json_message: str

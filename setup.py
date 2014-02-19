@@ -11,7 +11,7 @@ setup(
     packages=['mixpanel'],
     url='https://github.com/MyGGaN/mixpanel-python',
     description='Mixpanel library for Python 3.3',
-    long_description=open('README.txt').read(),
+    long_description=open('README.md').read(),
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',

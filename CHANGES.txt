@@ -1,19 +1,2 @@
 v3.0.0
-* BACKWARD BREAKING CHANGE: Ignore source IP in events by default
-* Allow users to provide "envelope" or "meta" tracking information
-
-v2.0.1
-* New build
-* Fix people analytics endpoint
-
-v2.0.0
-* MANY BACKWARD COMPATIBILITY-BREAKING CHANGES.
-* Name change- module is now named 'mixpanel'
-* Introduction of pluggable Consumers
-* Change to Mixpanel constructor- no longer takes a base url
-* Addition of sample scripts in demo/ distribution directory
-* rename of Mixpanel.track_charge to Mixpanel.people_track_charge
-* New test suite
-
-v1.0.0
-* Initial release
+* Initial release based on mixpanel-py v3.1.2

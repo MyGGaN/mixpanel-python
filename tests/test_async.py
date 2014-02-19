@@ -8,7 +8,7 @@ __author__ = 'Fredrik Svensson'
 import contextlib
 from unittest.mock import MagicMock, patch
 import mixpanel
-from mixpanel.async_consumer import AsyncConsumer, BufferedAsyncConsumer
+from mixpanel.consumer_tornado import AsyncConsumer, BufferedAsyncConsumer
 import unittest
 import urllib.parse
 import base64

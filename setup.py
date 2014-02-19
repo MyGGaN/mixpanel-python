@@ -4,17 +4,20 @@ except ImportError:
     from distutils.core import setup
 
 setup(
-    name='mixpanel-py',
-    version='3.1.2',
-    author='Mixpanel, Inc.',
-    author_email='dev@mixpanel.com',
+    name='mixpanel-py3',
+    version='3.0.0',
+    author='Fredrik Svensson',
+    author_email='shootoneshot@hotmail.com',
     packages=['mixpanel'],
-    url='https://github.com/mixpanel/mixpanel-python',
-    description='Official Mixpanel library for Python',
-    long_description=open('README.txt').read(),
+    url='https://github.com/MyGGaN/mixpanel-python',
+    description='Mixpanel library for Python3.3',
+    long_description=open('README.md').read(),
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2 :: Only',
-    ]
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4'
+    ],
+    test_suite='tests'
 )

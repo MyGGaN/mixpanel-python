@@ -1,21 +1,18 @@
 import base64
 import json
 import time
-import urllib
-import urllib2
+import urllib.request
 
-"""
-The mixpanel package allows you to easily track events and
-update people properties from your python application.
+# The mixpanel package allows you to easily track events and
+# update people properties from your python application.
+#
+# The Mixpanel class is the primary class for tracking events and
+# sending people analytics updates.
+#
+# The Consumer and BufferedConsumer classes allow callers to
+# customize the IO characteristics of their tracking.
 
-The Mixpanel class is the primary class for tracking events and
-sending people analytics updates.
-
-The Consumer and BufferedConsumer classes allow callers to
-customize the IO characteristics of their tracking.
-"""
-
-VERSION = '3.1.2'
+VERSION = '3.0.0'
 
 
 class Mixpanel(object):
@@ -143,7 +140,7 @@ class Mixpanel(object):
         property that doesn't exist will result in assigning a list with one
         element to that property.
         Example:
-            mp.people_append('12345', { "Power Ups": "Bubble Lead" })
+            mp.people_append('12345', {"Power Ups": "Bubble Lead"})
         """
         return self.people_update({
             '$distinct_id': distinct_id,
@@ -158,7 +155,7 @@ class Mixpanel(object):
         the request are merged with the existing list on the user profile,
         ignoring duplicate list values.
         Example:
-            mp.people_union('12345', { "Items purchased": ["socks", "shirts"] } )
+            mp.people_union('12345', {"Items purchased": ["socks", "shirts"]})
         """
         return self.people_update({
             '$distinct_id': distinct_id,
@@ -208,7 +205,8 @@ class Mixpanel(object):
             mp.people_track_charge('1234', 50, {'$time': "2013-04-01T09:02:00"})
         """
         properties.update({'$amount': amount})
-        return self.people_append(distinct_id, {'$transactions': properties}, meta=meta)
+        return self.people_append(distinct_id, {'$transactions': properties},
+                                  meta=meta)
 
     def people_clear_charges(self, distinct_id, meta={}):
         """
@@ -224,7 +222,6 @@ class Mixpanel(object):
     def people_update(self, message, meta={}):
         """
         Send a generic update to Mixpanel people analytics.
-
         Caller is responsible for formatting the update message, as
         documented in the Mixpanel HTTP specification, and passing
         the message as a dict to update. This
@@ -285,15 +282,16 @@ class Consumer(object):
             raise MixpanelException('No such endpoint "{0}". Valid endpoints are one of {1}'.format(self._endpoints.keys()))
 
     def _write_request(self, request_url, json_message):
-        data = urllib.urlencode({
-            'data': base64.b64encode(json_message),
+        data = urllib.parse.urlencode({
+            'data': base64.b64encode(json_message.encode('utf-8')),
             'verbose': 1,
-            'ip': 0,
-        })
+            'ip': 0
+        }).encode('utf-8')
         try:
-            request = urllib2.Request(request_url, data)
-            response = urllib2.urlopen(request).read()
-        except urllib2.HTTPError as e:
+            req = urllib.request.Request(url=request_url, data=data, method='POST')
+            f = urllib.request.urlopen(req)
+            response = f.read().decode('utf-8')
+        except urllib.error.HTTPError as e:
             raise MixpanelException(e)
 
         try:
@@ -332,10 +330,12 @@ class BufferedConsumer(object):
         may trigger a request to Mixpanel's servers.
 
         Calls to send() may throw an exception, but the exception may be
-        associated with the message given in an earlier call. If this is the case,
-        the resulting MixpanelException e will have members e.message and e.endpoint
+        associated with the message given in an earlier call. If this is the
+        case, the resulting MixpanelException e will have members e.message
+        and e.endpoint
 
-        :param endpoint: One of 'events' or 'people', the Mixpanel endpoint for sending the data
+        :param endpoint: One of 'events' or 'people', the Mixpanel endpoint
+            for sending the data
         :type endpoint: str (one of 'events' or 'people')
         :param json_message: A json message formatted for the endpoint.
         :type json_message: str
@@ -351,12 +351,11 @@ class BufferedConsumer(object):
 
     def flush(self):
         """
-        Send all remaining messages to Mixpanel.
-
-        BufferedConsumers will flush automatically when you call send(), but
-        you will need to call flush() when you are completely done using the
-        consumer (for example, when your application exits) to ensure there are
-        no messages remaining in memory.
+        Send all remaining messages to Mixpanel. BufferedConsumers will
+        flush automatically when you call send(), but you will need to call
+        flush() when you are completely done using the consumer (for example,
+        when your application exits) to ensure there are no messages remaining
+        in memory.
 
         Calls to flush() may raise a MixpanelException if there is a problem
         communicating with the Mixpanel servers. In this case, the exception

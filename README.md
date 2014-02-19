@@ -9,7 +9,7 @@ Features
 
 Installation
 ------------
-This Python3.3 library can not be installed via PyPi jet. Please clone the repo.
+This Python3.3 library can not be installed via PyPI jet. Please clone the repo.
 
 
 Getting Started

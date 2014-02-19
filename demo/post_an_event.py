@@ -1,5 +1,6 @@
 from mixpanel import Mixpanel
 
+
 def post_event(token):
     mixpanel = Mixpanel(token)
     mixpanel.track('ID', 'Script run')

@@ -3,12 +3,6 @@ try:
 except ImportError:
     from distutils.core import setup
 
-import os
-long_description = "This library allows for server-side integration of Mixpanel. This is an inofficial Mixpanel library for Python3.3. For more info visit https://github.com/MyGGaN/mixpanel-python"
-if os.path.exists('README.md'):
-    long_description = open('README.md').read()
-
-
 setup(
     name='mixpanel-py3',
     version='3.0.0',
@@ -17,7 +11,7 @@ setup(
     packages=['mixpanel'],
     url='https://github.com/MyGGaN/mixpanel-python',
     description='Mixpanel library for Python3.3',
-    long_description=open('README.md').read(),
+    long_description="This library allows for server-side integration of Mixpanel. This is an inofficial Mixpanel library for Python3.3.",
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',

@@ -12,7 +12,6 @@ Getting Started
 ---------------
 Typical usage usually looks like this:
 
-    #!/usr/bin/env python
     from mixpanel import Mixpanel
 
     mp = Mixpanel(YOUR_TOKEN)

@@ -279,7 +279,7 @@ class Consumer(object):
         if endpoint in self._endpoints:
             self._write_request(self._endpoints[endpoint], json_message)
         else:
-            raise MixpanelException('No such endpoint "{0}". Valid endpoints are one of {1}'.format(self._endpoints.keys()))
+            raise MixpanelException('No such endpoint "{0}". Valid endpoints are one of {1}'.format(list(self._endpoints.keys())))
 
     def _write_request(self, request_url, json_message):
         data = urllib.parse.urlencode({
@@ -342,7 +342,7 @@ class BufferedConsumer(object):
         :raises: MixpanelException
         """
         if endpoint not in self._buffers:
-            raise MixpanelException('No such endpoint "{0}". Valid endpoints are one of {1}'.format(self._buffers.keys()))
+            raise MixpanelException('No such endpoint "{0}". Valid endpoints are one of {1}'.format(list(self._buffers.keys())))
 
         buf = self._buffers[endpoint]
         buf.append(json_message)
@@ -364,7 +364,7 @@ class BufferedConsumer(object):
 
         :raises: MixpanelException
         """
-        for endpoint in self._buffers.keys():
+        for endpoint in list(self._buffers.keys()):
             self._flush_endpoint(endpoint)
 
     def _flush_endpoint(self, endpoint):

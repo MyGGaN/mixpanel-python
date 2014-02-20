@@ -1,2 +1,5 @@
+v3.0.2
+* Add dummy flush() to Consumer, fixes #1
+
 v3.0.0
 * Initial release based on mixpanel-py v3.1.2

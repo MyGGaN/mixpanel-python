@@ -12,7 +12,7 @@ import urllib.request
 # The Consumer and BufferedConsumer classes allow callers to
 # customize the IO characteristics of their tracking.
 
-VERSION = '3.0.1'
+VERSION = '3.0.2'
 
 
 class Mixpanel(object):
@@ -280,6 +280,10 @@ class Consumer(object):
             self._write_request(self._endpoints[endpoint], json_message)
         else:
             raise MixpanelException('No such endpoint "{0}". Valid endpoints are one of {1}'.format(list(self._endpoints.keys())))
+
+    def flush(self):
+        """Just to have the same interface as the BufferedCosumer."""
+        pass
 
     def _write_request(self, request_url, json_message):
         data = urllib.parse.urlencode({

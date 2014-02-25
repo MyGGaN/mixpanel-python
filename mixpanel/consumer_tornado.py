@@ -45,6 +45,6 @@ class BufferedAsyncConsumer(mixpanel.BufferedConsumer):
         self._consumer = AsyncConsumer(events_url, people_url)
         self._buffers = {
             'events': [],
-            'people': [],
+            'people': []
         }
         self._max_size = min(50, max_size)

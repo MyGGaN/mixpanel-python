@@ -63,12 +63,12 @@ class Mixpanel(object):
             'distinct_id': distinct_id,
             'time': int(self._now()),
             'mp_lib': 'python',
-            '$lib_version': VERSION,
+            '$lib_version': VERSION
         }
         all_properties.update(properties)
         event = {
             'event': event_name,
-            'properties': all_properties,
+            'properties': all_properties
         }
         event.update(meta)
         self._consumer.send('events', json.dumps(event, separators=(',', ':')))
@@ -86,7 +86,7 @@ class Mixpanel(object):
         self.track(original, '$create_alias', {
             'distinct_id': original,
             'alias': alias_id,
-            'token': self._token,
+            'token': self._token
         }, meta=meta)
 
     def people_set(self, distinct_id, properties, meta={}):
@@ -101,7 +101,7 @@ class Mixpanel(object):
         """
         return self.people_update({
             '$distinct_id': distinct_id,
-            '$set': properties,
+            '$set': properties
         }, meta=meta)
 
     def people_set_once(self, distinct_id, properties, meta={}):
@@ -116,7 +116,7 @@ class Mixpanel(object):
         """
         return self.people_update({
             '$distinct_id': distinct_id,
-            '$set_once': properties,
+            '$set_once': properties
         }, meta=meta)
 
     def people_increment(self, distinct_id, properties, meta={}):
@@ -131,7 +131,7 @@ class Mixpanel(object):
         """
         return self.people_update({
             '$distinct_id': distinct_id,
-            '$add': properties,
+            '$add': properties
         }, meta=meta)
 
     def people_append(self, distinct_id, properties, meta={}):
@@ -147,7 +147,7 @@ class Mixpanel(object):
         """
         return self.people_update({
             '$distinct_id': distinct_id,
-            '$append': properties,
+            '$append': properties
         }, meta=meta)
 
     def people_union(self, distinct_id, properties, meta={}):
@@ -162,7 +162,7 @@ class Mixpanel(object):
         """
         return self.people_update({
             '$distinct_id': distinct_id,
-            '$union': properties,
+            '$union': properties
         }, meta=meta)
 
     def people_unset(self, distinct_id, properties, meta={}):
@@ -176,7 +176,7 @@ class Mixpanel(object):
         """
         return self.people_update({
             '$distinct_id': distinct_id,
-            '$unset': properties,
+            '$unset': properties
         }, meta=meta)
 
     def people_delete(self, distinct_id, meta={}):
@@ -190,7 +190,7 @@ class Mixpanel(object):
         """
         return self.people_update({
             '$distinct_id': distinct_id,
-            '$delete': "",
+            '$delete': ""
         }, meta=meta)
 
     def people_track_charge(self, distinct_id, amount, properties={}, meta={}):
@@ -235,7 +235,7 @@ class Mixpanel(object):
         """
         record = {
             '$token': self._token,
-            '$time': int(self._now() * 1000),
+            '$time': int(self._now() * 1000)
         }
         record.update(message)
         record.update(meta)
@@ -294,7 +294,7 @@ class Consumer(object):
     def __init__(self, events_url=None, people_url=None):
         self.endpoints = {
             'events': events_url or 'https://api.mixpanel.com/track',
-            'people': people_url or 'https://api.mixpanel.com/engage',
+            'people': people_url or 'https://api.mixpanel.com/engage'
         }
 
     def send(self, endpoint, json_message):
@@ -321,7 +321,8 @@ class Consumer(object):
                 'No such endpoint "{0}". Valid endpoints are one of {1}'.format(list(self.endpoints.keys()))
             )
 
-    def flush(self):
+    @staticmethod
+    def flush():
         """To have the same interface as the BufferedConsumer."""
         pass
 
@@ -368,7 +369,7 @@ class BufferedConsumer(object):
         self._consumer = Consumer(events_url, people_url)
         self._buffers = {
             'events': [],
-            'people': [],
+            'people': []
         }
         self._max_size = min(50, max_size)
 

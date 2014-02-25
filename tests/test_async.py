@@ -41,10 +41,13 @@ class AsyncTest(tornado.testing.AsyncTestCase):
 
         return future
 
+
 class ConsumerAsyncTestCase(AsyncTest):
+
+    consumer = AsyncConsumer()
+
     def setUp(self):
         super(ConsumerAsyncTestCase, self).setUp()
-        self.consumer = AsyncConsumer()
 
     @contextlib.contextmanager
     def _assertSends(self, expect_url, expect_data):
@@ -67,16 +70,18 @@ class ConsumerAsyncTestCase(AsyncTest):
 
     @tornado.testing.gen_test
     def test_send_people(self):
-        with self._assertSends('https://api.mixpanel.com/engage','ip=0&data=IlBlb3BsZSI%3D&verbose=1'):
+        with self._assertSends('https://api.mixpanel.com/engage', 'ip=0&data=IlBlb3BsZSI%3D&verbose=1'):
             self.consumer.send('people', '"People"')
 
 
 class FunctionalAsyncTestCase(AsyncTest):
+
+    TOKEN = '12345'
+    mp = mixpanel.Mixpanel(TOKEN, consumer=AsyncConsumer())
+    mp._now = lambda : 1000
+
     def setUp(self):
         super(FunctionalAsyncTestCase, self).setUp()
-        self.TOKEN = '12345'
-        self.mp = mixpanel.Mixpanel(self.TOKEN, consumer=AsyncConsumer())
-        self.mp._now = lambda : 1000
 
     @contextlib.contextmanager
     def _assertRequested(self, expect_url, expect_data):
@@ -87,7 +92,6 @@ class FunctionalAsyncTestCase(AsyncTest):
             self.assertEqual(http_client.call_count, 1)
             ((url, _), req) = http_client.call_args
             self.assertEqual(url, expect_url)
-            body = req['body'].decode('utf-8')
             data = urllib.parse.parse_qs(req['body'].decode('utf-8'))
             self.assertEqual(len(data['data']), 1)
             payload_encoded = data['data'][0]
@@ -101,19 +105,20 @@ class FunctionalAsyncTestCase(AsyncTest):
         with self._assertRequested('https://api.mixpanel.com/track', expect_data):
             self.mp.track('button press', {'size': 'big', 'color': 'blue'})
 
-
     @tornado.testing.gen_test
     def test_people_set_functional(self):
         expect_data = {'$distinct_id': 'amq', '$set': {'birth month': 'october', 'favorite color': 'purple'}, '$time': 1000000, '$token': self.TOKEN}
         with self._assertRequested('https://api.mixpanel.com/engage', expect_data):
-             self.mp.people_set('amq', {'birth month': 'october', 'favorite color': 'purple'})
+            self.mp.people_set('amq', {'birth month': 'october', 'favorite color': 'purple'})
 
 
 class BufferedConsumerAsyncTestCase(AsyncTest):
+
+    MAX_LENGTH = 10
+    consumer = BufferedAsyncConsumer(MAX_LENGTH)
+
     def setUp(self):
         super(BufferedConsumerAsyncTestCase, self).setUp()
-        self.MAX_LENGTH = 10
-        self.consumer = BufferedAsyncConsumer(self.MAX_LENGTH)
 
     def test_buffer_hold_and_flush(self):
         with patch('tornado.httpclient.AsyncHTTPClient.fetch',
@@ -133,7 +138,7 @@ class BufferedConsumerAsyncTestCase(AsyncTest):
     def test_buffer_fills_up(self):
         with patch('tornado.httpclient.AsyncHTTPClient.fetch',
                    return_value=self.mock_fetch) as http_client:
-            for i in range(self.MAX_LENGTH - 1):
+            for _ in range(self.MAX_LENGTH - 1):
                 self.consumer.send('events', '"Event"')
             self.assertEqual(http_client.call_count, 0)
 

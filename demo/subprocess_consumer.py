@@ -67,7 +67,7 @@ def do_sending(queue):
 if __name__ == '__main__':
     # replace token with your real project token
     token = '2118572b315ee841dd0f3e6fa9abdab3'
-    distinct_id = ''.join(random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') for x in range(32))
+    distinct_id = ''.join(random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') for _ in range(32))
 
     queue = multiprocessing.Queue()
     sender = multiprocessing.Process(target=do_sending, args=(queue,))

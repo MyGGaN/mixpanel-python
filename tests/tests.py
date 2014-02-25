@@ -8,6 +8,7 @@ from unittest.mock import MagicMock, patch
 
 import mixpanel
 
+
 class LogConsumer(object):
     def __init__(self):
         self.log = []
@@ -15,12 +16,13 @@ class LogConsumer(object):
     def send(self, endpoint, event):
         self.log.append((endpoint, json.loads(event)))
 
+
 class MixpanelTestCase(unittest.TestCase):
     def setUp(self):
         self.TOKEN = '12345'
         self.consumer = LogConsumer()
         self.mp = mixpanel.Mixpanel('12345', consumer=self.consumer)
-        self.mp._now = lambda : 1000.1
+        self.mp._now = lambda: 1000.1
 
     def test_track(self):
         self.mp.track('ID', 'button press', {'size': 'big', 'color': 'blue'})
@@ -41,7 +43,7 @@ class MixpanelTestCase(unittest.TestCase):
 
     def test_track_meta(self):
         self.mp.track('ID', 'button press', {'size': 'big', 'color': 'blue'},
-            meta={'$ip': 0, '$ignore_time': True,})
+                      meta={'$ip': 0, '$ignore_time': True})
         self.assertEqual(self.consumer.log, [(
             'events', {
                 'event': 'button press',
@@ -55,7 +57,7 @@ class MixpanelTestCase(unittest.TestCase):
                     '$lib_version': mixpanel.VERSION,
                 },
                 '$ip': 0,
-                '$ignore_time': True,
+                '$ignore_time': True
             }
         )])
 
@@ -115,31 +117,31 @@ class MixpanelTestCase(unittest.TestCase):
         )])
 
     def test_people_union(self):
-        self.mp.people_union('amq', {'Albums': [ 'Diamond Dogs'] })
+        self.mp.people_union('amq', {'Albums': ['Diamond Dogs']})
         self.assertEqual(self.consumer.log, [(
             'people', {
                 '$time': int(self.mp._now() * 1000),
                 '$token': self.TOKEN,
                 '$distinct_id': 'amq',
                 '$union': {
-                    'Albums': [ 'Diamond Dogs' ],
-                },
+                    'Albums': ['Diamond Dogs']
+                }
             }
         )])
 
     def test_people_unset(self):
-        self.mp.people_unset('amq', [ 'Albums', 'Singles' ])
+        self.mp.people_unset('amq', ['Albums', 'Singles'])
         self.assertEqual(self.consumer.log, [(
             'people', {
                 '$time': int(self.mp._now() * 1000),
                 '$token': self.TOKEN,
                 '$distinct_id': 'amq',
-                '$unset': [ 'Albums', 'Singles' ],
+                '$unset': ['Albums', 'Singles']
             }
         )])
 
     def test_people_track_charge(self):
-        self.mp.people_track_charge('amq', 12.65, { '$time': '2013-04-01T09:02:00' })
+        self.mp.people_track_charge('amq', 12.65, {'$time': '2013-04-01T09:02:00'})
         self.assertEqual(self.consumer.log, [(
             'people', {
                 '$time': int(self.mp._now() * 1000),
@@ -148,9 +150,9 @@ class MixpanelTestCase(unittest.TestCase):
                 '$append': {
                     '$transactions': {
                         '$time': '2013-04-01T09:02:00',
-                        '$amount': 12.65,
-                    },
-                },
+                        '$amount': 12.65
+                    }
+                }
             }
         )])
 
@@ -161,12 +163,12 @@ class MixpanelTestCase(unittest.TestCase):
                 '$time': int(self.mp._now() * 1000),
                 '$token': self.TOKEN,
                 '$distinct_id': 'amq',
-                '$unset': [ '$transactions' ],
+                '$unset': ['$transactions']
             }
         )])
 
     def test_alias(self):
-        self.mp.alias('ALIAS','ORIGINAL ID')
+        self.mp.alias('ALIAS', 'ORIGINAL ID')
         self.assertEqual(self.consumer.log, [(
             'events', {
                 'event': '$create_alias',
@@ -176,15 +178,14 @@ class MixpanelTestCase(unittest.TestCase):
                     'alias': 'ALIAS',
                     'time': int(self.mp._now()),
                     'mp_lib': 'python',
-                    '$lib_version': mixpanel.VERSION,
-                },
+                    '$lib_version': mixpanel.VERSION
+                }
             }
-
         )])
 
     def test_people_meta(self):
         self.mp.people_set('amq', {'birth month': 'october', 'favorite color': 'purple'},
-            meta={'$ip': 0, '$ignore_time': True})
+                           meta={'$ip': 0, '$ignore_time': True})
         self.assertEqual(self.consumer.log, [(
             'people', {
                 '$time': int(self.mp._now() * 1000),
@@ -192,12 +193,13 @@ class MixpanelTestCase(unittest.TestCase):
                 '$distinct_id': 'amq',
                 '$set': {
                     'birth month': 'october',
-                    'favorite color': 'purple',
+                    'favorite color': 'purple'
                 },
                 '$ip': 0,
-                '$ignore_time': True,
+                '$ignore_time': True
             }
         )])
+
 
 class ConsumerTestCase(unittest.TestCase):
     def setUp(self):
@@ -222,8 +224,9 @@ class ConsumerTestCase(unittest.TestCase):
             self.consumer.send('events', '"Event"')
 
     def test_send_people(self):
-        with self._assertSends('https://api.mixpanel.com/engage','ip=0&data=IlBlb3BsZSI%3D&verbose=1'):
+        with self._assertSends('https://api.mixpanel.com/engage', 'ip=0&data=IlBlb3BsZSI%3D&verbose=1'):
             self.consumer.send('people', '"People"')
+
 
 class BufferedConsumerTestCase(unittest.TestCase):
     def setUp(self):
@@ -233,7 +236,7 @@ class BufferedConsumerTestCase(unittest.TestCase):
         self.mock.read.return_value = '{"status": 1, "error": null}'.encode('utf-8')
 
     def test_buffer_hold_and_flush(self):
-        with patch('urllib.request.urlopen', return_value = self.mock) as urlopen:
+        with patch('urllib.request.urlopen', return_value=self.mock) as urlopen:
             self.consumer.send('events', '"Event"')
             self.assertTrue(not self.mock.called)
             self.consumer.flush()
@@ -245,24 +248,24 @@ class BufferedConsumerTestCase(unittest.TestCase):
                              set('ip=0&data=WyJFdmVudCJd&verbose=1'.split('&')))
 
     def test_buffer_fills_up(self):
-        with patch('urllib.request.urlopen', return_value = self.mock) as urlopen:
-            for i in range(self.MAX_LENGTH - 1):
+        with patch('urllib.request.urlopen', return_value=self.mock) as urlopen:
+            for _ in range(self.MAX_LENGTH - 1):
                 self.consumer.send('events', '"Event"')
                 self.assertTrue(not self.mock.called)
 
             self.consumer.send('events', '"Last Event"')
 
             self.assertEqual(urlopen.call_count, 1)
-            ((request,),_) = urlopen.call_args
+            ((request,), _) = urlopen.call_args
             self.assertEqual(request.full_url, 'https://api.mixpanel.com/track')
             self.assertEqual(set(request.data.decode('utf-8').split('&')),
                              set('ip=0&data=WyJFdmVudCIsIkV2ZW50IiwiRXZlbnQiLCJFdmVudCIsIkV2ZW50IiwiRXZlbnQiLCJFdmVudCIsIkV2ZW50IiwiRXZlbnQiLCJMYXN0IEV2ZW50Il0%3D&verbose=1'.split('&')))
 
+
 class FunctionalTestCase(unittest.TestCase):
-    def setUp(self):
-        self.TOKEN = '12345'
-        self.mp = mixpanel.Mixpanel(self.TOKEN)
-        self.mp._now = lambda : 1000
+    TOKEN = '12345'
+    mp = mixpanel.Mixpanel(TOKEN)
+    mp._now = lambda: 1000
 
     @contextlib.contextmanager
     def _assertRequested(self, expect_url, expect_data):
@@ -292,7 +295,7 @@ class FunctionalTestCase(unittest.TestCase):
     def test_people_set_functional(self):
         expect_data = {'$distinct_id': 'amq', '$set': {'birth month': 'october', 'favorite color': 'purple'}, '$time': 1000000, '$token': self.TOKEN}
         with self._assertRequested('https://api.mixpanel.com/engage', expect_data):
-             self.mp.people_set('amq', {'birth month': 'october', 'favorite color': 'purple'})
+            self.mp.people_set('amq', {'birth month': 'october', 'favorite color': 'purple'})
 
 if __name__ == "__main__":
     unittest.main()

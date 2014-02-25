@@ -17,10 +17,14 @@ class AsyncConsumer(mixpanel.Consumer):
                 try:
                     response = json.loads(response.body.decode('utf-8'))
                 except ValueError:
-                    raise mixpanel.MixpanelException('Cannot interpret Mixpanel server response: {0}'.format(response))
+                    raise mixpanel.MixpanelException(
+                        'Cannot interpret Mixpanel server response: {0}'.format(response)
+                    )
 
                 if response['status'] != 1:
-                    raise mixpanel.MixpanelException('Mixpanel error: {0}'.format(response['error']))
+                    raise mixpanel.MixpanelException(
+                        'Mixpanel error: {0}'.format(response['error'])
+                    )
 
         data = urllib.parse.urlencode({
             'data': base64.b64encode(json_message.encode('utf-8')),

@@ -2,6 +2,8 @@ import base64
 import json
 import time
 import urllib.request
+import urllib.parse
+import urllib.error
 
 # The mixpanel package allows you to easily track events and
 # update people properties from your python application.
@@ -34,7 +36,8 @@ class Mixpanel(object):
         self._token = token
         self._consumer = consumer or Consumer()
 
-    def _now(self):
+    @staticmethod
+    def _now():
         return time.time()
 
     def track(self, distinct_id, event_name, properties={}, meta={}):
@@ -238,6 +241,40 @@ class Mixpanel(object):
         record.update(meta)
         self._consumer.send('people', json.dumps(record, separators=(',', ':')))
 
+    def get_tracking_url(self, event_name, distinct_id=None, redirect=None,
+                         image=False, properties={}, meta={}):
+        """
+        Returns a URL suitable to detect email open or click events.
+
+        It's an error to set both image and redirect.
+        If image is True the URL will return a 1x1 transparent pixel image.
+        If redirect is set to a URL the client will be directed there.
+        If no distinct_id is given mixpanel will use the IP of the request.
+        """
+        assert redirect is None or image is False, \
+            "Makes no sense to set both image and redirect."
+
+        all_properties = {'token': self._token}
+        if distinct_id is not None:
+            all_properties['distinct_id'] = distinct_id
+        all_properties.update(properties)
+        event = {
+            'event': event_name,
+            'properties': all_properties
+        }
+        event.update(meta)
+        data = json.dumps(event, separators=(',', ':')).encode('utf-8')
+        data = {'data': base64.b64encode(data)}
+        if 'distinct_id' not in all_properties.keys():
+            data['ip'] = 1
+        if image:
+            data['img'] = 1
+        elif redirect:
+            data['redirect'] = redirect
+
+        return self._consumer.endpoints['events'] + \
+            '?' + urllib.parse.urlencode(data)
+
 
 class MixpanelException(Exception):
     """
@@ -255,7 +292,7 @@ class Consumer(object):
     objects- if you don't provide your own, you get one of these.
     """
     def __init__(self, events_url=None, people_url=None):
-        self._endpoints = {
+        self.endpoints = {
             'events': events_url or 'https://api.mixpanel.com/track',
             'people': people_url or 'https://api.mixpanel.com/engage',
         }
@@ -270,19 +307,22 @@ class Consumer(object):
         All you need to do to write your own consumer is to implement
         a send method of your own.
 
-        :param endpoint: One of 'events' or 'people', the Mixpanel endpoint for sending the data
+        :param endpoint: One of 'events' or 'people', the Mixpanel endpoint for
+            sending the data
         :type endpoint: str (one of 'events' or 'people')
         :param json_message: A json message formatted for the endpoint.
         :type json_message: str
         :raises: MixpanelException
         """
-        if endpoint in self._endpoints:
-            self._write_request(self._endpoints[endpoint], json_message)
+        if endpoint in self.endpoints:
+            self._write_request(self.endpoints[endpoint], json_message)
         else:
-            raise MixpanelException('No such endpoint "{0}". Valid endpoints are one of {1}'.format(list(self._endpoints.keys())))
+            raise MixpanelException(
+                'No such endpoint "{0}". Valid endpoints are one of {1}'.format(list(self.endpoints.keys()))
+            )
 
     def flush(self):
-        """Just to have the same interface as the BufferedCosumer."""
+        """To have the same interface as the BufferedConsumer."""
         pass
 
     def _write_request(self, request_url, json_message):
@@ -292,7 +332,8 @@ class Consumer(object):
             'ip': 0
         }).encode('utf-8')
         try:
-            req = urllib.request.Request(url=request_url, data=data, method='POST')
+            req = urllib.request.Request(url=request_url, data=data,
+                                         method='POST')
             f = urllib.request.urlopen(req)
             response = f.read().decode('utf-8')
         except urllib.error.HTTPError as e:
@@ -301,10 +342,14 @@ class Consumer(object):
         try:
             response = json.loads(response)
         except ValueError:
-            raise MixpanelException('Cannot interpret Mixpanel server response: {0}'.format(response))
+            raise MixpanelException(
+                'Cannot interpret Mixpanel server response: {0}'.format(response)
+            )
 
         if response['status'] != 1:
-            raise MixpanelException('Mixpanel error: {0}'.format(response['error']))
+            raise MixpanelException(
+                'Mixpanel error: {0}'.format(response['error'])
+            )
 
         return True
 
@@ -346,7 +391,9 @@ class BufferedConsumer(object):
         :raises: MixpanelException
         """
         if endpoint not in self._buffers:
-            raise MixpanelException('No such endpoint "{0}". Valid endpoints are one of {1}'.format(list(self._buffers.keys())))
+            raise MixpanelException(
+                'No such endpoint "{0}". Valid endpoints are one of {1}'.format(list(self._buffers.keys()))
+            )
 
         buf = self._buffers[endpoint]
         buf.append(json_message)

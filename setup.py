@@ -10,8 +10,8 @@ setup(
     author_email='shootoneshot@hotmail.com',
     packages=['mixpanel'],
     url='https://github.com/MyGGaN/mixpanel-python',
-    description='Mixpanel library for Python3.3',
-    long_description="This library allows for server-side integration of Mixpanel. This is an inofficial Mixpanel library for Python3.3.",
+    description='Mixpanel library for Python 3',
+    long_description="This library wrapps Mixpanel's http API in a convenient way.  This is an inofficial Mixpanel library for Python 3.",
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',

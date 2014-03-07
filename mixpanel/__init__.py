@@ -14,7 +14,7 @@ import urllib.error
 # The Consumer and BufferedConsumer classes allow callers to
 # customize the IO characteristics of their tracking.
 
-VERSION = '3.0.2'
+VERSION = '3.0.3'
 
 
 class Mixpanel(object):

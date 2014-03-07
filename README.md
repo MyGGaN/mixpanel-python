@@ -8,6 +8,7 @@ Features over the official client
 ---------------------------------
 * Support for Python3.3
 * Optional async consumer using tornado's AsyncHTTPClient
+* Convenient method to generate tracking URLs, usefull for email tracking
 
 Installation
 ------------

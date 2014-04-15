@@ -1,7 +1,7 @@
 mixpanel-py3
 ============
 This library allows for server-side integration of Mixpanel.
-This is an inofficial Mixpanel library for Python3.3.
+This is an in-official Mixpanel library for Python3.3.
 Its major version number reflects the Mixpanel API version.
 
 Features over the official client
@@ -38,7 +38,7 @@ If you find any issues please file those on [GitHub](https://github.com/MyGGaN/m
 
 Contribute
 ----------
-If you have improved code, tests, documentation or added a feature feel free to open a pull request.
+If you have improved code, tests, documentation or added a feature, please open a pull request and share your work.
 
 Additional Information
 ----------------------

@@ -278,7 +278,7 @@ class Mixpanel(object):
 
 class MixpanelException(Exception):
     """
-    MixpanelExceptions will be thrown if the server can't recieve
+    MixpanelExceptions will be thrown if the server can't receive
     our events or updates for some reason- for example, if we can't
     connect to the Internet.
     """

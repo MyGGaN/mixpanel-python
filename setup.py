@@ -11,7 +11,7 @@ setup(
     packages=['mixpanel'],
     url='https://github.com/MyGGaN/mixpanel-python',
     description='Mixpanel library for Python 3',
-    long_description="This library wrapps Mixpanel's http API in a convenient way.  This is an inofficial Mixpanel library for Python 3.",
+    long_description="This library wraps Mixpanel's http API in a convenient way.  This is an in-official Mixpanel library for Python 3.",
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',

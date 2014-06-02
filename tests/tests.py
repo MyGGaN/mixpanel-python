@@ -12,6 +12,7 @@ import mixpanel
 class LogConsumer(object):
     def __init__(self):
         self.log = []
+        self.endpoints = {'events': 'https://api.mixpanel.com/track'}
 
     def send(self, endpoint, event):
         self.log.append((endpoint, json.loads(event)))
@@ -199,6 +200,17 @@ class MixpanelTestCase(unittest.TestCase):
                 '$ignore_time': True
             }
         )])
+
+    def test_get_tracking_url(self):
+        URL = 'https://www.mixpanel.com'
+        url = self.mp.get_tracking_url('event_name', 'the_id', image=True)
+        self.assertTrue('img=1' in url)
+        url = self.mp.get_tracking_url('event_name', 'the_id', redirect=URL)
+        self.assertTrue(urllib.parse.urlencode({'redriect': URL}) in url)
+        self.assertRaises(
+            AssertionError, self.mp.get_tracking_url,
+            'event_name', 'the_id', image=True, redirect=URL
+        )
 
 
 class ConsumerTestCase(unittest.TestCase):

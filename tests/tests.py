@@ -206,7 +206,7 @@ class MixpanelTestCase(unittest.TestCase):
         url = self.mp.get_tracking_url('event_name', 'the_id', image=True)
         self.assertTrue('img=1' in url)
         url = self.mp.get_tracking_url('event_name', 'the_id', redirect=URL)
-        self.assertTrue(urllib.parse.urlencode({'redriect': URL}) in url)
+        self.assertTrue(urllib.parse.urlencode({'redirect': URL}) in url)
         self.assertRaises(
             AssertionError, self.mp.get_tracking_url,
             'event_name', 'the_id', image=True, redirect=URL

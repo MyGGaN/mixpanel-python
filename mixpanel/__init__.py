@@ -14,7 +14,7 @@ import urllib.error
 # The Consumer and BufferedConsumer classes allow callers to
 # customize the IO characteristics of their tracking.
 
-VERSION = '3.0.3'
+VERSION = '3.0.4'
 
 
 class Mixpanel(object):
@@ -73,9 +73,14 @@ class Mixpanel(object):
         event.update(meta)
         self._consumer.send('events', json.dumps(event, separators=(',', ':')))
 
-    def alias(self, alias_id, original, meta={}):
+    def alias(self, alias_id, original, meta={}, consumer=None):
         """
         Gives custom alias to a people record.
+
+        By default it will use the standard synchronous consumer, but you may
+        provide another consumer if this is not wanted. Unlike other methods,
+        this method will ignore any consumer object provided to the Mixpanel
+        object on construction.
 
         Alias sends an update to our servers linking an existing distinct_id
         with a new id, so that events and profile updates associated with the
@@ -83,11 +88,19 @@ class Mixpanel(object):
         Example:
             mp.alias('amy@mixpanel.com', '13793')
         """
-        self.track(original, '$create_alias', {
-            'distinct_id': original,
-            'alias': alias_id,
-            'token': self._token
-        }, meta=meta)
+
+        sync_consumer = consumer or Consumer()
+        event = {
+            'event': '$create_alias',
+            'properties': {
+                'token': self._token,
+                'distinct_id': original,
+                'alias': alias_id
+            }
+        }
+        event.update(meta)
+        sync_consumer.send('events', json.dumps(event, separators=(',', ':')))
+        # assert(False)
 
     def people_set(self, distinct_id, properties, meta={}):
         """

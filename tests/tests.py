@@ -169,17 +169,14 @@ class MixpanelTestCase(unittest.TestCase):
         )])
 
     def test_alias(self):
-        self.mp.alias('ALIAS', 'ORIGINAL ID')
+        self.mp.alias('ALIAS', 'ORIGINAL ID', consumer=self.consumer)
         self.assertEqual(self.consumer.log, [(
             'events', {
                 'event': '$create_alias',
                 'properties': {
                     'token': self.TOKEN,
                     'distinct_id': 'ORIGINAL ID',
-                    'alias': 'ALIAS',
-                    'time': int(self.mp._now()),
-                    'mp_lib': 'python',
-                    '$lib_version': mixpanel.VERSION
+                    'alias': 'ALIAS'
                 }
             }
         )])

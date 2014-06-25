@@ -1,3 +1,7 @@
+v3.0.4
+* Fixed broken test case for get_tracking_url()
+* Making alias() synchronous by default
+
 v3.0.3
 * Add get_tracking_url()
 

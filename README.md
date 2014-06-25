@@ -1,14 +1,14 @@
 mixpanel-py3
 ============
 This library allows for server-side integration of Mixpanel.
-This is an in-official Mixpanel library for Python3.3.
+This is an in-official Mixpanel library for Python3.
 Its major version number reflects the Mixpanel API version.
 
 Features over the official client
 ---------------------------------
-* Support for Python3.3
+* Support for Python3
 * Optional async consumer using tornado's AsyncHTTPClient
-* Convenient method to generate tracking URLs, usefull for email tracking
+* Convenient method to generate tracking URLs, useful for email tracking
 
 Installation
 ------------
@@ -42,6 +42,6 @@ If you have improved code, tests, documentation or added a feature, please open 
 
 Additional Information
 ----------------------
-[mixpanel-py](https://github.com/mixpanel/mixpanel-python) Official client for python2.
+[mixpanel-py](https://github.com/mixpanel/mixpanel-python) Official client for Python2.
 
 [Tornado](http://www.tornadoweb.org/en/stable/) I/O-loop based web framework.
